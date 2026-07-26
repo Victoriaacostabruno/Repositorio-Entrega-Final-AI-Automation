@@ -26,14 +26,14 @@ Automatizar el proceso comercial de Nova PR para:
 
 # 🛠 Tecnologías utilizadas
 
-| Tecnología | Función |
-|------------|----------|
-| Make | Orquestador principal de automatización |
-| Google Forms | Recepción de solicitudes de clientes |
-| Google Sheets | Trigger de los escenarios |
-| Airtable | Base de datos y memoria del sistema |
-| Google Gemini AI | Análisis inteligente de leads |
-| Gmail | Comunicación con responsables y clientes |
+| Prueba | Descripción | Resultado |
+|--------|-------------|-----------|
+| 1 | Lead aprobado (ruta Aprobado) | ✅ Correcto |
+| 2 | Lead rechazado (ruta Rechazado) | ✅ Correcto |
+| 3 | Prioridad Alta (verificación de regla/filtro) | ✅ Correcto |
+| 4 | Prioridad Media (verificación de regla/filtro) | ✅ Correcto |
+| 5 | Manejo de error (Error Handler + resiliencia) | ✅ Correcto |
+
 
 ---
 
