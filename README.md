@@ -302,6 +302,7 @@ También se incluyen ambos blueprints y el diagrama de arquitectura.
 
 - README.md
 - Arquitectura de Flujo.pdf
+- Ecosistema de Automatización IA para la Gestión Inteligente de Leads en Nova PR.mp4
 - Escenario 1 - Recepción y Análisis IA (HITL Gate).blueprint.json
 - Escenario 2 - Continuación tras aprobación humana.blueprint.json
 - Carpeta Evidencias
