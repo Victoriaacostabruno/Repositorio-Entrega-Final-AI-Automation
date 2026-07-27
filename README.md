@@ -1,12 +1,12 @@
 # 🚀 Entrega Final – Ecosistema de Automatización IA para Gestión Inteligente de Leads
 
-## 📌 Descripción del Proyecto
+# 📌 Descripción del Proyecto
 
-Este proyecto consiste en el desarrollo de un ecosistema de automatización inteligente para la gestión de leads de la agencia ficticia **Nova PR**.
+Este proyecto implementa un ecosistema de automatización inteligente para la gestión de leads de la agencia ficticia **Nova PR**.
 
-El objetivo es automatizar el proceso desde que un potencial cliente completa un formulario de contacto hasta el envío de una propuesta comercial, incorporando Inteligencia Artificial para analizar cada solicitud y un proceso **Human-in-the-Loop (HITL)** que garantice la aprobación humana antes de contactar al cliente.
+El objetivo es automatizar todo el proceso comercial desde que un potencial cliente completa un formulario de contacto hasta el envío de una propuesta comercial personalizada, incorporando Inteligencia Artificial para analizar las solicitudes y un proceso **Human-in-the-Loop (HITL)** que requiere aprobación humana antes de contactar al cliente.
 
-La solución integra herramientas de automatización, bases de datos, IA y comunicación multicanal, siguiendo una arquitectura modular y escalable.
+La solución integra Google Forms, Google Sheets, Airtable, Google Gemini AI, Gmail y Make, siguiendo una arquitectura modular basada en dos escenarios independientes.
 
 ---
 
@@ -17,31 +17,32 @@ Automatizar el proceso comercial de Nova PR para:
 - Centralizar la información de los leads.
 - Analizar automáticamente cada solicitud mediante IA.
 - Clasificar la prioridad del lead.
-- Generar un resumen ejecutivo y una propuesta personalizada.
+- Generar un resumen ejecutivo.
+- Generar una propuesta comercial personalizada.
 - Registrar toda la información en Airtable.
-- Incorporar un proceso de aprobación humana antes del contacto con el cliente.
-- Enviar automáticamente la propuesta o la notificación correspondiente según la decisión del responsable.
+- Incorporar una validación humana antes del contacto con el cliente.
+- Enviar automáticamente la propuesta o el correo de rechazo según la decisión tomada.
 
 ---
 
 # 🛠 Tecnologías utilizadas
 
-| Prueba | Descripción | Resultado |
-|--------|-------------|-----------|
-| 1 | Lead aprobado (ruta Aprobado) | ✅ Correcto |
-| 2 | Lead rechazado (ruta Rechazado) | ✅ Correcto |
-| 3 | Prioridad Alta (verificación de regla/filtro) | ✅ Correcto |
-| 4 | Prioridad Media (verificación de regla/filtro) | ✅ Correcto |
-| 5 | Manejo de error (Error Handler + resiliencia) | ✅ Correcto |
-
+- Google Forms
+- Google Sheets
+- Airtable
+- Google Gemini AI (Gemini 3.5 Flash)
+- Gmail
+- Make
 
 ---
 
 # 🏗 Arquitectura del Sistema
 
-El proyecto está compuesto por **dos escenarios independientes**, conectados mediante un proceso Human-in-the-Loop.
+La solución está compuesta por **dos escenarios independientes**, conectados mediante un proceso Human-in-the-Loop.
 
-## Escenario 1 – Recepción y análisis del lead
+---
+
+## Escenario 1 – Recepción y análisis inteligente del lead
 
 Flujo:
 
@@ -71,33 +72,36 @@ Gmail (Solicitud de aprobación)
 
 Fin del escenario
 
-Este escenario recibe la información enviada por el cliente, registra el lead en Airtable, utiliza Google Gemini AI para analizar la consulta y genera automáticamente:
+Este escenario recibe automáticamente la información enviada por el potencial cliente, crea el registro en Airtable y utiliza Google Gemini AI para analizar la solicitud.
+
+La IA genera automáticamente:
 
 - Prioridad del lead
 - Resumen ejecutivo
-- Propuesta comercial personalizada
+- Propuesta comercial
 
-Finalmente se envía un correo electrónico solicitando la aprobación del responsable de Nova PR.
+Posteriormente actualiza el registro en Airtable y envía un correo solicitando la aprobación humana.
 
 ---
 
-## Human in the Loop (HITL)
+# Human in the Loop (HITL)
 
-Para evitar que la Inteligencia Artificial tome decisiones completamente autónomas sobre el contacto con los clientes, el sistema incorpora un proceso Human-in-the-Loop.
+El proyecto implementa un proceso **Human-in-the-Loop** antes de ejecutar la acción crítica (contactar al cliente).
 
-El flujo se detiene luego del análisis realizado por Gemini.
+Una vez finalizado el análisis realizado por Google Gemini AI:
 
-El responsable recibe un correo electrónico y completa un formulario de aprobación donde indica:
+- el escenario se detiene;
+- se envía un correo electrónico al responsable comercial;
+- el responsable completa un formulario de aprobación indicando:
 
 - ID del Lead
-- Aprobar
-- Rechazar
+- Decisión (Aprobado / Rechazado)
 
-La automatización no continúa hasta recibir esa decisión humana.
+La automatización únicamente continúa cuando existe una decisión humana explícita.
 
 ---
 
-## Escenario 2 – Continuación tras aprobación humana
+## Escenario 2 – Continuación luego de la aprobación
 
 Flujo:
 
@@ -105,7 +109,7 @@ Formulario de aprobación
 
 ↓
 
-Google Sheets
+Google Sheets (Watch New Rows)
 
 ↓
 
@@ -115,106 +119,138 @@ Airtable (Search Record)
 
 Router
 
-├── Aprobado
+├── Ruta Aprobado
 
 │
 
-├── Airtable (Estado = Aprobado por Humano)
+├── Airtable (Update Estado)
 
-├── Gmail (Envío de propuesta al cliente)
+├── Gmail (Envío de propuesta)
 
 │
 
-└── Rechazado
+└── Ruta Rechazado
 
 ↓
 
-Airtable (Estado = Rechazado)
+Airtable (Update Estado)
 
 ↓
 
 Gmail (Correo de rechazo)
 
-Este segundo escenario solamente se ejecuta cuando existe una decisión humana explícita.
+Este escenario solamente se ejecuta luego de recibir la aprobación o rechazo del responsable.
 
 ---
 
-# 🤖 Procesamiento mediante IA
+# 🤖 Procesamiento mediante Inteligencia Artificial
 
-Google Gemini AI recibe dinámicamente la información ingresada por el cliente.
+Google Gemini AI recibe dinámicamente la información ingresada en el formulario.
 
 El modelo analiza:
 
-- Tipo de empresa
-- Objetivo
-- Presupuesto
+- Industria
+- Tamaño de empresa
 - Servicio solicitado
+- Objetivo comercial
+- Presupuesto
 - Urgencia
 
-Y devuelve:
+Como resultado devuelve:
 
 - Prioridad IA
-- Justificación
-- Resumen ejecutivo
-- Propuesta comercial personalizada
+- Resumen IA
+- Propuesta IA
 
-Toda esta información se almacena automáticamente en Airtable.
+Estos resultados se almacenan automáticamente en Airtable.
 
 ---
 
 # 🗄 Base de Datos
 
-La solución utiliza Airtable como memoria del sistema.
+Se utiliza una única base de Airtable denominada **Nova PR – CRM IA**.
 
 ## Tabla Leads
 
+Contiene toda la información del proceso.
+
 Campos principales:
 
-- Nombre
-- Email
+- Nombre y Apellido
+- Correo Electrónico
 - Empresa
 - Cargo
-- Servicio solicitado
+- Industria
+- Tamaño empresa
+- Servicios
 - Objetivo
 - Presupuesto
+- Urgencia
 - Prioridad IA
 - Resumen IA
 - Propuesta IA
 - Estado
 - Error
 
-## Tabla Aprobaciones
+---
 
-Relacionada mediante Linked Record con la tabla Leads.
+# 🔗 Relación entre Google Sheets y Airtable
 
-Contiene:
+Aunque el proyecto utiliza una única tabla en Airtable, existe una **relación lógica** entre Google Sheets y Airtable mediante el **ID del Lead**.
 
-- Lead relacionado
-- Decisión
-- Fecha
-- Comentarios (opcional)
+Funcionamiento:
+
+1. El primer escenario crea el registro del lead en Airtable.
+2. En el correo de aprobación se envía el **ID del Lead**.
+3. El responsable completa el formulario indicando ese mismo ID y la decisión (Aprobado o Rechazado).
+4. Google Forms registra la respuesta en Google Sheets.
+5. El segundo escenario utiliza ese **ID del Lead** para ejecutar un **Search Records** en Airtable mediante la fórmula:
+
+```
+RECORD_ID() = "ID del Lead"
+```
+
+De esta manera se identifica el registro correcto y posteriormente se actualiza su estado.
+
+Esta relación mediante una clave compartida reemplaza la necesidad de utilizar múltiples tablas relacionadas en Airtable.
+
+---
+
+# 📊 Flujo de Estados
+
+Cada lead evoluciona durante el proceso mediante el campo **Estado**.
+
+Estados posibles:
+
+- Pendiente
+- Aprobado por Humano
+- Rechazado
+
+Esto permite conocer en todo momento la situación de cada solicitud comercial.
 
 ---
 
 # ⚙ Gestión de Errores
 
-El escenario incorpora Error Handlers de Make para mejorar la resiliencia del sistema.
+La solución incorpora manejo de errores mediante **Error Handlers de Make**.
 
-Si ocurre un error durante el procesamiento con Google Gemini AI:
+En caso de producirse un error durante el procesamiento:
 
-- el flujo evita detener completamente la automatización;
-- se registra el estado correspondiente;
-- el escenario continúa mediante Resume.
+- el escenario no se detiene completamente;
+- se utiliza **Resume** para continuar la ejecución;
+- se registra el estado correspondiente en Airtable.
+
+Esto mejora la resiliencia de la automatización.
 
 ---
 
 # 🔒 Seguridad
 
-Para evitar ejecuciones repetidas o bucles infinitos:
+Para evitar ejecuciones repetidas o bucles:
 
 - ambos escenarios utilizan Google Sheets Watch New Rows configurado en modo **From now on**;
-- cada escenario trabaja sobre eventos independientes;
-- el segundo escenario solo puede iniciarse mediante una aprobación humana.
+- el segundo escenario sólo puede iniciarse mediante una aprobación humana;
+- la acción crítica nunca es ejecutada automáticamente por la IA.
 
 ---
 
@@ -222,11 +258,11 @@ Para evitar ejecuciones repetidas o bucles infinitos:
 
 | Prueba | Descripción | Resultado |
 |---------|-------------|-----------|
-| 1 | Lead aprobado | ✅ Correcto |
-| 2 | Lead rechazado | ✅ Correcto |
-| 3 | Prioridad Alta | ✅ Correcto |
-| 4 | Prioridad Media | ✅ Correcto |
-| 5 | Manejo de error (Error Handler) | ✅ Correcto |
+| Lead aprobado | Flujo completo con aprobación humana | ✅ Correcto |
+| Lead rechazado | Flujo completo con rechazo humano | ✅ Correcto |
+| Clasificación IA | Generación de prioridad, resumen y propuesta | ✅ Correcto |
+| Actualización Airtable | Registro actualizado correctamente | ✅ Correcto |
+| Error Handler | Continuidad del escenario mediante Resume | ✅ Correcto |
 
 ---
 
@@ -234,83 +270,45 @@ Para evitar ejecuciones repetidas o bucles infinitos:
 
 El repositorio incluye capturas de:
 
+- Formulario Lead
+- Formulario de aprobación
+- Google Sheets
+- Airtable
 - Escenario 1
 - Escenario 2
-- Formularios
-- Airtable
 - Correos electrónicos
-- Error Handling
 - Human-in-the-Loop
+- Error Handler
 
 ---
 
 # 📂 Archivos del Proyecto
 
-```
-Entrega-Final-AI-Automation
-
-README.md
-
-ArquitecturadeFlujo.pdf
-
-Escenario2-ContinuacióntrasAprobacionHumana.blueprint.json
-
-Escenario1-RecepciónyAnálisisIA(HITL Gate).blueprint.json
-
-/evidencias
-
-FormularioLeadSeccion1.png
-
-FormularioLeadSeccion2.png
-
-FormularioLeadSeccion3.png
-
-FormularioLeadRespuestas.png
-
-FormularioAprobacion.png
-
-FormularioAprobacionRespuestas.png
-
-Escenario1.png
-
-Escenario2.png
-
-PrintAirtableCRM.png
-
-PrintAirtableCRM2.png
-
-PrintAirtableCRM3.png
-
-CorreoAprobacion.png
-
-CorreoCliente.png
-
-ErrorHandler.png
-```
+- README.md
+- Arquitectura de Flujo.pdf
+- Escenario 1 (.blueprint.json)
+- Escenario 2 (.blueprint.json)
+- Carpeta Evidencias
 
 ---
 
 # 🎥 Video Demo
 
-Video demostrativo (3 minutos):
-
-(https://youtu.be/3w8OR4_OH4E?si=K_fX3aLhjs9JwE4A)
+https://youtu.be/3w8OR4_OH4E?si=K_fX3aLhjs9JwE4A
 
 ---
 
 # 🔗 Enlaces
 
-## Base de datos (Airtable)
+## Base de datos Airtable (Modo Lectura)
 
-**Modo lectura**
-
-https://airtable.com/app4tYdSsIxLp07Kt/shrUTJzr7WgViVPyG 
+https://airtable.com/app4tYdSsIxLp07Kt/shrUTJzr7WgViVPyG
 
 ---
 
 ## Repositorio GitHub
 
-https://github.com/Victoriaacostabruno/Entrega-Final-AI-Automation
+https://github.com/Victoriaacostabruno/Repositorio-Entrega-Final-AI-Automation
 
 ---
 
@@ -318,9 +316,7 @@ https://github.com/Victoriaacostabruno/Entrega-Final-AI-Automation
 
 **Victoria Acosta Bruno**
 
-Entrega Final
-
-Curso AI Automation
+Entrega Final – AI Automation
 
 Coderhouse
 
