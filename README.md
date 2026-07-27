@@ -242,6 +242,8 @@ Cuando ocurre un error en un módulo que no impide continuar el proceso:
 
 Este mecanismo mejora la resiliencia del flujo frente a errores puntuales.
 
+En las pruebas no se registraron fallas, por lo que se incluyó evidencia de la configuración del handler.
+
 ---
 
 # 🔒 Seguridad y prevención de bucles
